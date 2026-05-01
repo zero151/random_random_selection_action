@@ -23,3 +23,8 @@ venv\Scripts\activate         # Windows
 
 # 2. Установить FastAPI и Uvicorn (конкретная версия)
 pip install fastapi==0.135.0 uvicorn
+```
+
+## Запуск
+```bash
+uvicorn random_main:app --reload
