@@ -11,10 +11,8 @@ try:
         rand = json.load(file)
 except FileNotFoundError:
     print("File not found, starting with empty list")
-    rand = []
 except:
     print("error, starting with empty list")
-    rand = []
 
 def save_file():
     with open(name_file_load, "w") as file:
