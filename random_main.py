@@ -20,21 +20,31 @@ def save_file():
     with open(name_file_load, "w") as file:
         json.dump(rand,file)
 
-last_random = ""
 
 @app.get("/")
-def get_random_action():
+def root():
+    return {"status": "ok", "message": "use /random"}
+
+
+@app.get("/random", summary="выбор одного и больше рандомных действий с повторениями или без")
+def get_random_action(count : int = 1, unique: bool = False):
     if not rand:
         return {"message": "no action"}
-    if len(rand) == 1:
-        return {"message": rand[0]}
-    global last_random
-    random_action = ""
-    while True:
-        random_action = random.choice(rand)
-        if random_action != last_random:
-            last_random = random_action
-            return {"message": random_action}
+    if count < 1:
+        return {"error": "count must be > 0"}
+    if unique:
+        if count > len(rand):
+            return {"error": "count must not be greater that actions count"}
+        temp = rand.copy()
+        result = []
+        for _ in range(count):
+            choice = random.choice(temp)
+            result.append(choice)
+            temp.remove(choice)
+        return {"message": result}
+    else:
+        result = [random.choice(rand) for _ in range(count)]
+        return {"message": result}
     
 
 @app.post("/add/{text}")
@@ -55,7 +65,7 @@ def get_all():
     all_action = {}
     for i in range(len(rand)):
         all_action[i+1] = rand[i]
-    return {"actions" : all_action}
+    return {"total": len(rand), "actions" : all_action}
 
 @app.delete("/del/{index}", summary = "index начинается с 1")
 def delete_action(index: int):
